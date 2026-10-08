@@ -17,7 +17,7 @@ h1{font-size:22px;margin:0 0 8px;color:var(--ac)}h2{font-size:18px;margin:0 0 14
 .o.ok{border-color:var(--ok);background:var(--okb)}.o.no{border-color:var(--no);background:var(--nob)}
 .e{margin-top:12px;padding:12px;border-radius:10px;background:var(--okb);border-left:4px solid var(--ok);font-size:15px}
 .b{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:12px 20px;font:inherit;font-weight:600;cursor:pointer;margin-top:14px;width:100%}
-.big{font-size:44px;font-weight:700;color:var(--ac);margin:8px 0}
+.qb{padding-bottom:16px;margin-bottom:16px;border-bottom:1px dashed var(--bd)}.qb h2{font-size:17px}.big{font-size:44px;font-weight:700;color:var(--ac);margin:8px 0}
 </style></head><body><div class="w"><div class="c" id="app"></div></div>
 <script>
 var R=[
@@ -74,19 +74,25 @@ var R=[
 "Tiền đề khách quan cho sự ra đời của chủ nghĩa xã hội khoa học là gì?|Khoa học tự nhiên và tư tưởng lý luận|Chỉ khoa học tự nhiên|Điều kiện kinh tế - xã hội|Vai trò cá nhân của C.Mác|Tiền đề khách quan gồm khoa học tự nhiên (như học thuyết tế bào, bảo toàn năng lượng, tiến hóa) và tư tưởng lý luận (triết học Đức, kinh tế chính trị Anh, chủ nghĩa xã hội không tưởng Pháp)."
 ];
 function sh(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
-var L="ABCD",Q,i,s,done,app=document.getElementById("app");
-function start(){Q=R.map(function(r){var p=r.split("|");return{q:p[0],a:p[1],o:sh([p[1],p[2],p[3],p[4]]),e:p[5]}});i=0;s=0;show()}
-function intro(){app.innerHTML='<h1>Quiz chủ nghĩa xã hội Khoa học</h1><p class="m">'+R.length+' câu trắc nghiệm A/B/C/D, làm theo thứ tự câu hỏi trong vở (vị trí các đáp án A/B/C/D được xáo ngẫu nhiên). Sau mỗi câu sẽ hiện đáp án đúng kèm giải thích theo vở ghi.</p><button class="b" id="go">Bắt đầu</button>';document.getElementById("go").onclick=start}
-function show(){if(i>=Q.length)return end();done=false;var q=Q[i];
-var h='<div class="m">Câu '+(i+1)+'/'+Q.length+' · Đúng: '+s+'</div><div class="bar"><i style="width:'+(i/Q.length*100)+'%"></i></div><h2>'+q.q+'</h2>';
-q.o.forEach(function(o,k){h+='<button class="o" data-k="'+k+'"><b>'+L[k]+'.</b>'+o+'</button>'});
-app.innerHTML=h+'<div id="fb"></div>';
-app.querySelectorAll(".o").forEach(function(b){b.onclick=function(){pick(+b.dataset.k)}})}
-function pick(k){if(done)return;done=true;var q=Q[i],bs=app.querySelectorAll(".o"),ok=q.o[k]===q.a;if(ok)s++;
+var L="ABCD",PER=2,Q,i,s,ans,app=document.getElementById("app");
+function start(){Q=sh(R.map(function(r){var p=r.split("|");return{q:p[0],a:p[1],o:sh([p[1],p[2],p[3],p[4]]),e:p[5]}}));i=0;s=0;show()}
+function intro(){app.innerHTML='<h1>Quiz Chủ nghĩa xã hội khoa học</h1><p class="m">'+R.length+' câu trắc nghiệm A/B/C/D, xáo trộn ngẫu nhiên, mỗi lần hiện '+PER+' câu. Sau mỗi câu sẽ hiện đáp án đúng kèm giải thích.</p><button class="b" id="go">Bắt đầu</button>';document.getElementById("go").onclick=start}
+function cnt(){return Math.min(PER,Q.length-i)}
+function show(){if(i>=Q.length)return end();ans=0;var n=cnt();
+var h='<div class="m">Câu '+(i+1)+(n>1?'-'+(i+n):'')+'/'+Q.length+' · Đúng: <span id="sc">'+s+'</span></div><div class="bar"><i style="width:'+(i/Q.length*100)+'%"></i></div>';
+for(var k=0;k<n;k++){var q=Q[i+k];h+='<div class="qb" id="q'+k+'"><h2>'+(i+k+1)+'. '+q.q+'</h2>';
+q.o.forEach(function(o,m){h+='<button class="o" data-q="'+k+'" data-k="'+m+'"><b>'+L[m]+'.</b>'+o+'</button>'});
+h+='<div class="fb"></div></div>'}
+app.innerHTML=h+'<div id="nxw"></div>';window.scrollTo(0,0);
+app.querySelectorAll(".o").forEach(function(b){b.onclick=function(){pick(+b.dataset.q,+b.dataset.k)}})}
+function pick(qi,k){var box=document.getElementById("q"+qi);if(box.dataset.d)return;box.dataset.d="1";
+var q=Q[i+qi],bs=box.querySelectorAll(".o"),ok=q.o[k]===q.a;if(ok)s++;
 bs.forEach(function(b,n){if(q.o[n]===q.a)b.classList.add("ok");else if(n===k)b.classList.add("no")});
 var ci=q.o.indexOf(q.a);
-document.getElementById("fb").innerHTML='<div class="e"><b>'+(ok?"Chính xác!":"Chưa đúng.")+'</b> Đáp án đúng: '+L[ci]+'. '+(q.e||("Theo vở ghi: "+q.a+"."))+'</div><button class="b" id="nx">'+(i+1>=Q.length?"Xem kết quả":"Câu tiếp theo")+'</button>';
-document.getElementById("nx").onclick=function(){i++;show()}}
-function end(){var p=Math.round(s/Q.length*100);app.innerHTML='<h1>Hoàn thành!</h1><div class="big">'+s+'/'+Q.length+'</div><p class="m">Tỉ lệ đúng: '+p+'%</p><button class="b" id="re">Làm lại từ đầu</button>';document.getElementById("re").onclick=start}
+box.querySelector(".fb").innerHTML='<div class="e"><b>'+(ok?"Chính xác!":"Chưa đúng.")+'</b> Đáp án đúng: '+L[ci]+'. '+(q.e||("Đáp án: "+q.a+"."))+'</div>';
+document.getElementById("sc").textContent=s;ans++;var n=cnt();
+if(ans===n){var w=document.getElementById("nxw");w.innerHTML='<button class="b" id="nx">'+(i+n>=Q.length?"Xem kết quả":"Tiếp theo")+'</button>';
+document.getElementById("nx").onclick=function(){i+=n;show()}}}
+function end(){var p=Math.round(s/Q.length*100);app.innerHTML='<h1>Hoàn thành!</h1><div class="big">'+s+'/'+Q.length+'</div><p class="m">Tỉ lệ đúng: '+p+'%</p><button class="b" id="re">Làm lại (xáo trộn mới)</button>';window.scrollTo(0,0);document.getElementById("re").onclick=start}
 intro();
 </script></body></html>
